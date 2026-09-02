@@ -1,16 +1,23 @@
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+
+import { authenticate } from "./auth-store";
 
 export default function Index() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // O botão só estará habilitado se ambos os campos tiverem conteúdo
   const isFormValid = email.trim() !== "" && password.trim() !== "";
 
   const handleLogin = () => {
-    console.log("Email:", email);
-    console.log("Senha:", password);
+    if (!authenticate(email, password)) {
+      Alert.alert("Dados inválidos", "Verifique seu e-mail e senha ou crie uma conta.");
+      return;
+    }
+
+    router.replace("/solicitacao");
   };
 
   return (
@@ -24,6 +31,7 @@ export default function Index() {
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
+        autoCorrect={false}
       />
 
       <TextInput
@@ -34,11 +42,21 @@ export default function Index() {
         secureTextEntry
       />
 
-      <Button 
-        title="Entrar" 
-        onPress={handleLogin} 
-        disabled={!isFormValid} 
-      />
+      <TouchableOpacity
+        style={[styles.primaryButton, !isFormValid && styles.disabledButton]}
+        onPress={handleLogin}
+        disabled={!isFormValid}
+      >
+        <Text style={styles.primaryButtonText}>Entrar</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push("/recuperar-senha")}>
+        <Text style={styles.link}>Esqueci minha senha</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push("/cadastro")}>
+        <Text style={styles.link}>Criar conta</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -63,5 +81,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     marginBottom: 16,
+  },
+  primaryButton: {
+    backgroundColor: "#2563eb",
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: "center",
+  },
+  disabledButton: {
+    backgroundColor: "#9ca3af",
+  },
+  primaryButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  link: {
+    color: "#2563eb",
+    fontSize: 15,
+    textAlign: "center",
+    marginTop: 20,
   },
 });
