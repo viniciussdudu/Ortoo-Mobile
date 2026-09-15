@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   button: { backgroundColor: "#2563eb", borderRadius: 8, paddingVertical: 14, alignItems: "center" },
-  disabled: { backgroundColor: "#9ca3af" },
+  disabled: { backgroundColor: "#93abe0" },
   buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
   link: { color: "#2563eb", fontSize: 15, textAlign: "center", marginTop: 20 },
 });
