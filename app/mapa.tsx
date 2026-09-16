@@ -58,7 +58,9 @@ export default function Mapa() {
         />
       </View>
 
-      <Text style={styles.listaTitulo}>Prestadores próximos</Text>
+      <View style={styles.mapaPlaceholder}>
+        <Text style={styles.mapaPlaceholderTexto}>🗺️ Mapa em breve</Text>
+      </View>
 
       <ScrollView
         style={styles.lista}

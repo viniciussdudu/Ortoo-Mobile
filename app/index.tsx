@@ -1,7 +1,6 @@
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { authenticate } from "../src/auth-store";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function Index() {
   const router = useRouter();
@@ -10,14 +9,11 @@ export default function Index() {
 
   const isFormValid = email.trim() !== "" && password.trim() !== "";
 
-  const handleLogin = () => {
-    console.log("Email digitado:", email, "| Senha digitada:", password);
-    if (!authenticate(email, password)) {
-      Alert.alert("Dados inválidos", "Verifique seu e-mail e senha ou crie uma conta.");
-      return;
-    }
-    router.replace("/solicitacao");
-  };
+const handleLogin = () => {
+  console.log("Email:", email);
+  console.log("Senha:", password);
+  router.push("/home");
+};
 
   return (
     <View style={styles.container}>

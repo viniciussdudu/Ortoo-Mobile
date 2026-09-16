@@ -1,6 +1,7 @@
-﻿import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+﻿import { useRouter } from "expo-router";
+import React from "react";
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { colors } from "../constants/colors";
 
 const USUARIO_MOCK = {
   nome: "Arthur Souza",
@@ -20,6 +21,14 @@ const HISTORICO_MOCK = [
   { id: "3", data: "02/08/2026", problema: "Sem combustível", status: "Cancelado" },
 ];
 
+const MENU_MOCK = [
+  { id: "pedidos", icone: "📦", label: "Meus Pedidos" },
+  { id: "pagamento", icone: "💳", label: "Formas de Pagamento" },
+  { id: "veiculos", icone: "🚗", label: "Veículos Cadastrados" },
+  { id: "suporte", icone: "🆘", label: "Suporte 24h" },
+  { id: "config", icone: "⚙️", label: "Configurações" },
+];
+
 export default function Perfil() {
   const router = useRouter();
 
@@ -30,7 +39,11 @@ export default function Perfil() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView style={styles.tela} contentContainerStyle={styles.container}>
+      <TouchableOpacity onPress={() => router.push("/home")}>
+        <Text style={styles.linkInicio}>🏠 Início</Text>
+      </TouchableOpacity>
+
       <View style={styles.header}>
         <View style={styles.avatar}>
           <Text style={styles.avatarTexto}>
@@ -59,6 +72,21 @@ export default function Perfil() {
         </Text>
       </View>
 
+      <Text style={styles.secaoTitulo}>Menu</Text>
+      <View style={styles.menuCard}>
+        {MENU_MOCK.map((item, index) => (
+          <TouchableOpacity
+            key={item.id}
+            style={[styles.menuLinha, index !== MENU_MOCK.length - 1 && styles.menuLinhaBorda]}
+            onPress={() => Alert.alert(item.label, "Em breve nesta versão do app.")}
+          >
+            <Text style={styles.menuIcone}>{item.icone}</Text>
+            <Text style={styles.menuLabel}>{item.label}</Text>
+            <Text style={styles.menuSeta}>›</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       <Text style={styles.secaoTitulo}>Histórico de atendimentos</Text>
       {HISTORICO_MOCK.map((item) => (
         <View key={item.id} style={styles.card}>
@@ -82,119 +110,74 @@ export default function Perfil() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    paddingHorizontal: 24,
-    paddingTop: 56,
-    paddingBottom: 40,
-    backgroundColor: "#fff",
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 32,
-  },
+  tela: { flex: 1, backgroundColor: colors.cream },
+  container: { paddingHorizontal: 24, paddingTop: 56, paddingBottom: 40 },
+  linkInicio: { color: colors.navy, fontWeight: "600", marginBottom: 20 },
+  header: { alignItems: "center", marginBottom: 28 },
   avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: "#2563eb",
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: colors.terracota,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 12,
   },
-  avatarTexto: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  nome: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  email: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 2,
-  },
-  telefone: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 2,
-  },
+  avatarTexto: { color: colors.cream, fontSize: 26, fontWeight: "bold" },
+  nome: { color: colors.navy, fontSize: 20, fontWeight: "bold" },
+  email: { color: colors.textMuted, fontSize: 14, marginTop: 2 },
+  telefone: { color: colors.textMuted, fontSize: 14, marginTop: 2 },
   botaoSecundario: {
     marginTop: 16,
     borderWidth: 1,
-    borderColor: "#2563eb",
+    borderColor: colors.navy,
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 20,
   },
-  botaoSecundarioTexto: {
-    color: "#2563eb",
-    fontWeight: "600",
-  },
-  secaoTitulo: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 10,
-    marginTop: 8,
-  },
+  botaoSecundarioTexto: { color: colors.navy, fontWeight: "600" },
+  secaoTitulo: { color: colors.navy, fontSize: 16, fontWeight: "bold", marginBottom: 10, marginTop: 8 },
   card: {
-    borderWidth: 1,
-    borderColor: "#eee",
-    borderRadius: 10,
+    backgroundColor: colors.white,
+    borderRadius: 12,
     padding: 14,
     marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
-  veiculoModelo: {
-    fontSize: 15,
-    fontWeight: "600",
+  veiculoModelo: { color: colors.navy, fontSize: 15, fontWeight: "600" },
+  veiculoInfo: { color: colors.textMuted, fontSize: 13, marginTop: 4 },
+  menuCard: {
+    backgroundColor: colors.white,
+    borderRadius: 12,
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
-  veiculoInfo: {
-    fontSize: 13,
-    color: "#666",
-    marginTop: 4,
-  },
-  historicoLinha: {
+  menuLinha: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
   },
-  historicoProblema: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  historicoData: {
-    fontSize: 13,
-    color: "#666",
-    marginTop: 2,
-  },
-  statusBadge: {
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
-  statusConcluido: {
-    backgroundColor: "#dcfce7",
-  },
-  statusCancelado: {
-    backgroundColor: "#fee2e2",
-  },
-  statusPadrao: {
-    backgroundColor: "#e5e7eb",
-  },
-  statusTexto: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  botaoSair: {
-    marginTop: 16,
-    alignItems: "center",
-    paddingVertical: 12,
-  },
-  botaoSairTexto: {
-    color: "#dc2626",
-    fontWeight: "600",
-    fontSize: 15,
-  },
+  menuLinhaBorda: { borderBottomWidth: 1, borderBottomColor: colors.border },
+  menuIcone: { fontSize: 18, marginRight: 12 },
+  menuLabel: { flex: 1, color: colors.navy, fontSize: 14, fontWeight: "600" },
+  menuSeta: { color: colors.textMuted, fontSize: 18 },
+  historicoLinha: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  historicoProblema: { color: colors.navy, fontSize: 15, fontWeight: "600" },
+  historicoData: { color: colors.textMuted, fontSize: 13, marginTop: 2 },
+  statusBadge: { borderRadius: 6, paddingHorizontal: 10, paddingVertical: 4 },
+  statusConcluido: { backgroundColor: colors.successBg },
+  statusCancelado: { backgroundColor: colors.dangerBg },
+  statusPadrao: { backgroundColor: colors.border },
+  statusTexto: { fontSize: 12, fontWeight: "600" },
+  botaoSair: { marginTop: 8, alignItems: "center", paddingVertical: 12 },
+  botaoSairTexto: { color: colors.danger, fontWeight: "600", fontSize: 15 },
 });
