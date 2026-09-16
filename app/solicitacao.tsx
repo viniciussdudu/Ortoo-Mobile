@@ -1,6 +1,8 @@
+
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { colors } from "../constants/colors";
 
 const PROBLEMAS = [
   { id: "pneu", label: "Pneu furado", icone: "🛞" },
@@ -20,6 +22,10 @@ export default function Solicitacao() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity style={styles.linkInicio} onPress={() => router.push("/home")}>
+        <Text style={styles.linkInicioTexto}>🏠 Início</Text>
+      </TouchableOpacity>
+
       <Text style={styles.title}>O que está acontecendo?</Text>
       <Text style={styles.subtitle}>Selecione o problema para pedir assistência</Text>
 
@@ -56,17 +62,27 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     paddingHorizontal: 24,
-    paddingTop: 64,
-    backgroundColor: "#fff",
+    paddingTop: 56,
+    backgroundColor: colors.cream,
+  },
+  linkInicio: {
+    alignSelf: "flex-start",
+    marginBottom: 20,
+  },
+  linkInicioTexto: {
+    fontSize: 14,
+    color: colors.navy,
+    fontWeight: "600",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
+    color: colors.navy,
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: "#666",
+    color: colors.textMuted,
     marginBottom: 24,
   },
   opcoesContainer: {
@@ -76,14 +92,15 @@ const styles = StyleSheet.create({
   opcao: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 12,
+    backgroundColor: colors.white,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: 14,
     padding: 16,
   },
   opcaoSelecionada: {
-    borderColor: "#2563eb",
-    backgroundColor: "#eff6ff",
+    borderColor: colors.terracota,
+    backgroundColor: colors.terracotaLight,
   },
   opcaoIcone: {
     fontSize: 24,
@@ -91,24 +108,25 @@ const styles = StyleSheet.create({
   },
   opcaoLabel: {
     fontSize: 16,
+    color: colors.navy,
   },
   opcaoLabelSelecionada: {
-    color: "#2563eb",
-    fontWeight: "600",
+    color: colors.terracota,
+    fontWeight: "700",
   },
   botao: {
-    backgroundColor: "#2563eb",
-    borderRadius: 8,
-    paddingVertical: 14,
+    backgroundColor: colors.terracota,
+    borderRadius: 12,
+    paddingVertical: 16,
     alignItems: "center",
     marginBottom: 32,
   },
   botaoDesabilitado: {
-    backgroundColor: "#ccc",
+    backgroundColor: colors.border,
   },
   botaoTexto: {
-    color: "#fff",
+    color: colors.cream,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
   },
 });

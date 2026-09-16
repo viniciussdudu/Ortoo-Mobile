@@ -1,17 +1,20 @@
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function Index() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // O botão só estará habilitado se ambos os campos tiverem conteúdo
   const isFormValid = email.trim() !== "" && password.trim() !== "";
 
-  const handleLogin = () => {
-    console.log("Email:", email);
-    console.log("Senha:", password);
-  };
+const handleLogin = () => {
+  console.log("Email:", email);
+  console.log("Senha:", password);
+  router.push("/home");
+};
 
   return (
     <View style={styles.container}>
