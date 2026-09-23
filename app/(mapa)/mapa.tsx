@@ -12,6 +12,7 @@ import { useRouter, Stack } from "expo-router";
 import * as Location from "expo-location"; // 2. Adicionado import do Location
 import MapaTempoReal from "../../components/MapaTempoReal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LOJAS_PARCEIRAS } from "../../src/lojas-parceiras";
 
 export default function TelaMapa() {
   const router = useRouter();
@@ -107,21 +108,18 @@ export default function TelaMapa() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.listaHorizontal}
           >
-            <View style={styles.cardMecanico}>
-              <Text style={styles.nomeMecanico}>Auto Socorro Rápido</Text>
-              <Text style={styles.infoMecanico}>1.2 km • ⭐ 4.8</Text>
-              <TouchableOpacity style={styles.botaoChamar}>
-                <Text style={styles.textoBotao}>Chamar</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.cardMecanico}>
-              <Text style={styles.nomeMecanico}>Guincho 24h Silva</Text>
-              <Text style={styles.infoMecanico}>2.5 km • ⭐ 4.5</Text>
-              <TouchableOpacity style={styles.botaoChamar}>
-                <Text style={styles.textoBotao}>Chamar</Text>
-              </TouchableOpacity>
-            </View>
+            {LOJAS_PARCEIRAS.map((loja) => (
+              <View key={loja.nome} style={styles.cardMecanico}>
+                <Text style={styles.nomeMecanico}>{loja.nome}</Text>
+                <Text style={styles.infoMecanico}>{loja.info}</Text>
+                <TouchableOpacity
+                  style={styles.botaoChamar}
+                  onPress={() => router.push({ pathname: "/chat", params: { loja: loja.nome } })}
+                >
+                  <Text style={styles.textoBotao}>Conversar</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
           </ScrollView>
         </View>
       </SafeAreaView>

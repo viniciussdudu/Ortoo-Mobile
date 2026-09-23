@@ -2,6 +2,8 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
+import { LOJAS_PARCEIRAS } from "../src/lojas-parceiras";
+
 export default function Home() {
   const router = useRouter();
 
@@ -14,6 +16,21 @@ export default function Home() {
         <Text style={styles.cardIcone}>🆘</Text>
         <Text style={styles.cardTexto}>Solicitar Assistência</Text>
       </TouchableOpacity>
+
+      <Text style={styles.secaoTitulo}>Assistências parceiras</Text>
+      {LOJAS_PARCEIRAS.map((loja) => (
+        <TouchableOpacity
+          key={loja.nome}
+          style={styles.lojaCard}
+          onPress={() => router.push({ pathname: "/chat", params: { loja: loja.nome } })}
+        >
+          <View>
+            <Text style={styles.lojaNome}>{loja.nome}</Text>
+            <Text style={styles.lojaInfo}>{loja.info}</Text>
+          </View>
+          <Text style={styles.chatIcone}>💬</Text>
+        </TouchableOpacity>
+      ))}
 
       <TouchableOpacity style={styles.card} onPress={() => router.push("/perfil")}>
         <Text style={styles.cardIcone}>👤</Text>
@@ -61,4 +78,25 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "600",
   },
+  secaoTitulo: {
+    color: "#374151",
+    fontSize: 15,
+    fontWeight: "700",
+    marginTop: 8,
+    marginBottom: 10,
+  },
+  lojaCard: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#eee",
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 10,
+    backgroundColor: "#fff",
+  },
+  lojaNome: { color: "#1F3140", fontSize: 16, fontWeight: "700" },
+  lojaInfo: { color: "#6B7280", fontSize: 13, marginTop: 4 },
+  chatIcone: { fontSize: 20 },
 });
