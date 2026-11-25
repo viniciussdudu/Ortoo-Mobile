@@ -6,6 +6,23 @@ O **ÖRTÖÖ** é uma plataforma de assistência veicular sob demanda que conect
 
 ---
 
+## Rodar a versão front-end
+
+Esta versão funciona sem API ou banco de dados. Os dados de demonstração ficam em memória e voltam aos valores iniciais quando o aplicativo é reiniciado. Para entrar como cliente, use qualquer e-mail e senha não vazios. A conta de prestador está definida em `src/mock-data.ts`:
+
+- E-mail: `mecanico@ortoo.com`
+- Senha: `mecanico123`
+
+O cadastro também aceita dados de demonstração.
+
+As telas de assistência, acompanhamento, prestadores, chat, perfil, veículos, suporte e cartões usam registros locais simulados. A localização continua usando a permissão GPS do aparelho. Pagamentos são apenas confirmados visualmente e não geram cobranças reais. Envio de foto de perfil depende de armazenamento de arquivos e está indisponível nesta versão.
+
+O login e a sessão são demonstrativos: não há API autenticada nem banco de dados. A sessão vale apenas enquanto o app está aberto; sair limpa o token de demonstração e os dados simulados da sessão. A proteção de rotas evita navegação acidental, mas não substitui autorização no servidor. Consulte [as decisões de autenticação, privacidade e permissões](docs/decisoes-capitulo-14.md).
+
+Inicie o projeto com `npm start` e escolha Android, iOS ou Web no Expo.
+
+---
+
 ##  O Problema
 
 Imprevistos no trânsito — como pneu furado, falta de combustível (pane seca), bateria descarregada ou falhas mecânicas — geram alto estresse e vulnerabilidade para os condutores. O modelo tradicional de assistência veicular enfrenta sérios gargalos:

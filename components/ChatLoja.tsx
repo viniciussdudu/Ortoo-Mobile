@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors } from "../constants/colors";
 
@@ -64,10 +65,10 @@ export default function ChatLoja({ loja, testMode = false }: ChatLojaProps) {
   };
 
   return (
+    <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
     <KeyboardAvoidingView
       style={styles.screen}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={90}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.header}>
         <View style={styles.avatar}>
@@ -89,6 +90,7 @@ export default function ChatLoja({ loja, testMode = false }: ChatLojaProps) {
         style={styles.messages}
         contentContainerStyle={styles.messagesContent}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
       >
         <Text style={styles.today}>Hoje</Text>
         {mensagens.map((item) => (
@@ -129,6 +131,7 @@ export default function ChatLoja({ loja, testMode = false }: ChatLojaProps) {
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

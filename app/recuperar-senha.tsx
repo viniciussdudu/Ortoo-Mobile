@@ -1,91 +1,204 @@
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-
-import { resetPassword } from "../src/auth-store";
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { ApiError, recuperarSenha } from "../src/services/api";
+import { Cores, useEstilos, useTema } from "../src/tema";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RecuperarSenha() {
+  const { cores: CORES } = useTema();
+  const styles = useEstilos(criarEstilos);
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmation, setConfirmation] = useState("");
+  const [novaSenha, setNovaSenha] = useState("");
+  const [confirmaSenha, setConfirmaSenha] = useState("");
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
-  const valid = email.trim() !== "" && password.trim().length >= 6 && confirmation.trim() !== "";
+  async function handleRedefinir() {
+    setErro(null);
 
-  const submit = () => {
-    if (password !== confirmation) return Alert.alert("Senhas diferentes", "Digite a mesma senha nos dois campos.");
-    const result = resetPassword(email, password);
-    if (!result.ok) return Alert.alert("Conta não encontrada", result.message);
-    Alert.alert("Senha alterada", "Use sua nova senha para entrar. Esta alteração vale somente nesta sessão.", [
-      { text: "Ir para o login", onPress: () => router.replace("/") },
-    ]);
-  };
+    if (!email.trim() || !novaSenha || !confirmaSenha) {
+      setErro("Preencha todos os campos.");
+      return;
+    }
+
+    if (!/^\d{6}$/.test(novaSenha)) {
+      setErro("A senha deve conter exatamente 6 dígitos numéricos.");
+      return;
+    }
+
+    if (novaSenha !== confirmaSenha) {
+      setErro("As senhas não coincidem.");
+      return;
+    }
+
+    try {
+      setCarregando(true);
+      const res = await recuperarSenha({ email: email.trim(), novaSenha });
+      Alert.alert("Sucesso", res.mensagem || "Senha alterada com sucesso!", [
+        { text: "Ir para Login", onPress: () => router.replace("/") },
+      ]);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setErro(err.message);
+      } else {
+        setErro("Ocorreu um erro ao redefinir a senha.");
+      }
+    } finally {
+      setCarregando(false);
+    }
+  }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Stack.Screen options={{ title: "Recuperar Senha" }} />
-
+      <KeyboardAvoidingView style={styles.teclado} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}>
       <View style={styles.formCard}>
-        <Text style={styles.title}>Recuperar senha</Text>
-        <Text style={styles.subtitle}>Informe o e-mail da conta e defina uma nova senha. Nenhum e-mail será enviado.</Text>
+        <Text style={styles.title}>Redefinir Senha</Text>
+        <Text style={styles.subtitle}>
+          Digite o e-mail da sua conta e cadastre sua nova senha de 6 dígitos.
+        </Text>
+
+        {erro ? <Text style={styles.erroText}>{erro}</Text> : null}
 
         <TextInput
           style={styles.input}
-          placeholder="E-mail cadastrado"
-          value={email}
-          onChangeText={setEmail}
+          placeholderTextColor={CORES.textoSuave}
+          placeholder="Seu e-mail cadastrado"
           keyboardType="email-address"
           autoCapitalize="none"
-          autoCorrect={false}
+          value={email}
+          onChangeText={setEmail}
         />
+
         <TextInput
           style={styles.input}
-          placeholder="Nova senha (mínimo 6 caracteres)"
-          value={password}
-          onChangeText={setPassword}
+          placeholderTextColor={CORES.textoSuave}
+          placeholder="Nova senha (6 dígitos numéricos)"
+          keyboardType="numeric"
           secureTextEntry
+          maxLength={6}
+          value={novaSenha}
+          onChangeText={setNovaSenha}
         />
+
         <TextInput
           style={styles.input}
-          placeholder="Confirmar nova senha"
-          value={confirmation}
-          onChangeText={setConfirmation}
+          placeholderTextColor={CORES.textoSuave}
+          placeholder="Confirme a nova senha"
+          keyboardType="numeric"
           secureTextEntry
+          maxLength={6}
+          value={confirmaSenha}
+          onChangeText={setConfirmaSenha}
         />
 
         <TouchableOpacity
-          style={[styles.button, !valid && styles.disabled]}
-          onPress={submit}
-          disabled={!valid}
+          style={[styles.button, carregando && styles.buttonDisabled]}
+          onPress={handleRedefinir}
+          disabled={carregando}
         >
-          <Text style={styles.buttonText}>Alterar senha</Text>
+          {carregando ? (
+            <ActivityIndicator color={CORES.sobrePrimaria} />
+          ) : (
+            <Text style={styles.buttonText}>Atualizar Senha</Text>
+          )}
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.link}>Voltar ao login</Text>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <Text style={styles.backButtonText}>Voltar</Text>
         </TouchableOpacity>
       </View>
-    </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const criarEstilos = (CORES: Cores) =>
+  StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center", // Centraliza o cartão horizontalmente na Web
+    alignItems: "center",
     paddingHorizontal: 24,
-    backgroundColor: "#fff",
+    backgroundColor: CORES.fundo,
   },
+  teclado: { flex: 1, width: "100%" },
+  scroll: { flexGrow: 1, justifyContent: "center", alignItems: "center", paddingVertical: 24 },
   formCard: {
-    width: "100%",      // Ocupa 100% no mobile
-    maxWidth: 400,     // Limita a largura em 400px no computador
+    width: "100%",
+    maxWidth: 400,
   },
-  title: { fontSize: 28, fontWeight: "bold", textAlign: "center", marginBottom: 8 },
-  subtitle: { fontSize: 14, color: "#666", textAlign: "center", lineHeight: 20, marginBottom: 24 },
-  input: { height: 48, borderColor: "#ccc", borderWidth: 1, borderRadius: 8, paddingHorizontal: 12, marginBottom: 16 },
-  button: { backgroundColor: "#2563eb", borderRadius: 8, paddingVertical: 14, alignItems: "center" },
-  disabled: { backgroundColor: "#93abe0" },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
-  link: { color: "#2563eb", fontSize: 15, textAlign: "center", marginTop: 20 },
+  title: {
+    color: CORES.texto,
+    fontSize: 26,
+    fontWeight: "bold",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  subtitle: {
+    color: CORES.textoSuave,
+    fontSize: 14,
+    textAlign: "center",
+    lineHeight: 20,
+    marginBottom: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: CORES.borda,
+    backgroundColor: CORES.cartao,
+    color: CORES.texto,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  button: {
+    backgroundColor: CORES.primaria,
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  buttonDisabled: {
+    backgroundColor: CORES.primaria,
+    opacity: 0.5,
+  },
+  buttonText: {
+    color: CORES.sobrePrimaria,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  backButton: {
+    paddingVertical: 12,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  backButtonText: {
+    color: CORES.textoSuave,
+    fontSize: 15,
+  },
+  erroText: {
+    color: CORES.erro,
+    backgroundColor: CORES.erroSuave,
+    padding: 10,
+    borderRadius: 6,
+    marginBottom: 12,
+    textAlign: "center",
+  },
 });
